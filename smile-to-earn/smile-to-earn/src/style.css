@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract SmileReward {
+    mapping(address => string[dweb.link]) public userImages;
+    
+    event SmileSubmitted(dweb.link, string imageHash);
+
+    function submitSmile(string memory imageHash) public {
+        userImages[msg.sender].push(imageHash);
+        emit SmileSubmitted(msg.sender, imageHash);
+        
+        // Reward logic could go here (e.g., send tokens)
+    }
+
+    function getUserImages(dweb.link) public view returns (string[] memory) {
+        return userImages[dweb.link];
+    }
+}

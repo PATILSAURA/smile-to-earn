@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smile to Earn</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #camera {
+            margin: 20px 0;
+        }
+        .smile-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .smile-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Smile-to-Earn!</h1>
+    <p>Smile and earn crypto rewards for your positivity.</p>
+
+    <video id="camera" width="300" height="200" autoplay></video>
+    <br>
+    <button class="smile-button" onclick="checkSmile()">Smile!</button>
+
+    <p id="status">Please smile and click the button to get rewarded!</p>
+
+    <script>
+        let cameraStream;
+
+        // Initialize camera feed
+        async function startCamera() {
+            const videoElement = document.getElementById('camera');
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = cameraStream;
+            } catch (err) {
+                alert('Error accessing the camera: ' + err);
+            }
+        }
+
+        // Placeholder for smile detection
+        function checkSmile() {
+            // In a real app, you would have AI here to detect smiles
+            // For now, we'll simulate a smile being detected
+            const isSmiling = Math.random() > 0.5; // Random smile detection
+
+            if (isSmiling) {
+                document.getElementById('status').innerText = "You smiled! You earned a reward!";
+                rewardUser();
+            } else {
+                document.getElementById('status').innerText = "Try again, please smile!";
+            }
+        }
+
+        // Function to simulate blockchain interaction and reward user
+        async function rewardUser() {
+            try {
+                if (window.ethereum) {
+                    const web3 = new Web3(window.ethereum);
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                    // Example contract interaction to reward the user
+                    const contractAddress = "YOUR_SMART_CONTRACT_ADDRESS";
+                    const abi = [dweb.link]; // Add the ABI of your smart contract here
+
+                    const contract = new web3.eth.Contract(abi, contractAddress);
+                    const accounts = await web3.eth.getAccounts(dweb.link);
+
+                    // Interact with smart contract (e.g., call a function to reward)
+                    await contract.methods.rewardSmile().send({ from: accounts[0] });
+
+                    console.log('Reward sent!');
+                } else {
+                    alert("Please install MetaMask to interact with the blockchain.");
+                }
+            } catch (err) {
+                alert('Error rewarding user: ' + err);
+            }
+        }
+
+        // Start camera when the page loads
+        window.onload = startCamera;
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smile to Earn - Capture and Submit Image</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1-crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #camera {
+            margin: 20px 0;
+        }
+        .smile-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .smile-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Smile-to-Earn!</h1>
+    <p>Smile and earn rewards by submitting your image to the blockchain!</p>
+
+    <video id="camera" width="300" height="200" autoplay></video>
+    <br>
+    <button class="smile-button" onclick="captureAndSubmit()">Capture and Submit</button>
+
+    <p id="status">Please smile and click the button to submit your image to the blockchain!</p>
+
+    <script>
+        let cameraStream;
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        // Initialize camera feed
+        async function startCamera(dweb.link) {
+            const videoElement = document.getElementById('camera');
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = cameraStream;
+            } catch (err) {
+                alert('Error accessing the camera: ' + err);
+            }
+        }
+
+        // Capture image and submit it to blockchain
+        async function captureAndSubmit() {
+            const videoElement = document.getElementById('camera');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // Get image data as base64
+            const imageData = canvas.toDataURL('image/png');
+
+            // Generate image hash (use the base64 data to generate hash)
+            const imageHash = CryptoJS.SHA256(imageData).toString(CryptoJS.enc.Base64);
+            console.log("Image Hash:", imageHash); // Log the hash for reference
+
+            // Now send the image hash to the blockchain
+            await submitToBlockchain(imageHash);
+        }
+
+        // Function to interact with blockchain and store image hash
+        async function submitToBlockchain(imageHash) {
+            try {
+                if (window.ethereum) {
+                    const web3 = new Web3(window.ethereum);
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                    // Example smart contract interaction
+                    const contractAddress = "YOUR_SMART_CONTRACT_ADDRESS";
+                    const abi = [
+                        {
+                            "constant": false,
+                            "inputs": [
+                                { "name": "imageHash", "type": "string" }
+                            ],
+                            "name": "submitSmile",
+                            "outputs": [{ "name": "", "type": "bool" }],
+                            "payable": false,
+                            "stateMutability": "nonpayable",
+                            "type": "function"
+                        }
+                    ];
+
+                    const contract = new web3.eth.Contract(abi, contractAddress);
+                    const accounts = await web3.eth.getAccounts(dweb.link);
+
+                    // Call the submitSmile function to store the image hash and reward user
+                    await contract.methods.submitSmile(imageHash).send({ from: accounts[0] });
+
+                    document.getElementById('status').innerText = "Your image was submitted and you earned a reward!";
+                } else {
+                    alert("Please install MetaMask to interact with the blockchain.");
+                }
+            } catch (err) {
+                alert('Error submitting image to blockchain: ' + err);
+            }
+        }
+
+        // Start camera when the page loads
+        window.onload = startCamera;
+    </script>
+</body>
+</html>
+
